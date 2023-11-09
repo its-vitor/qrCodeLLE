@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      lang="javascript"
+      src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <title>LLE - Code by Cx</title>
+
+    <style>
+      #output {
+        width: 90%;
+        display: flex;
+        align-items: last baseline;
+        justify-content: flex-start;
+        gap: 30px;
+        flex-wrap: wrap;
+      }
+      .container {
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 30px auto;
+        padding: 0;
+        text-align: center;
+        max-width: 250px;
+      }
+
+      .container.row {
+        flex-direction: row;
+        font-size: 17px;
+        gap: 40px;
+        max-height: 180px;
+        max-width: 500px;
+      }
+    </style>
+
+    <script>
+      function handleClick({ target }) {
+        target.innerText == "Coluna"
+          ? (target.innerText = "Em linha")
+          : (target.innerText = "Coluna");
+      }
+
+      async function main(eventButton) {
+        let ids = await controller(eventButton);
+        const botao = document.querySelector("button");
+        eventButton.target.style.display = "none";
+        botao.style.display = "none";
+
+        for (const id of ids) {
+          const productName = await getProductName(id);
+          const qrCodeImg = await genCode(id);
+
+          document.getElementById("output").innerHTML += `
+            <div class="${botao.innerText == "Coluna" ? "container" : "container row"}">
+              <h3>${productName}</h3>
+              ${qrCodeImg}
+            </div>`;
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <input
+      type="file"
+      id="fileInput"
+      accept=".xlsx, .txt"
+      onchange="main(event)"
+    />
+    <button type="button" onclick="handleClick(event)">Coluna</button>
+    <div id="output"></div>
+
+    <script src=".\src\utils\excel.js"></script>
+    <script src=".\src\controller.js"></script>
+    <script src=".\src\utils\txt.js"></script>
+  </body>
+</html>
